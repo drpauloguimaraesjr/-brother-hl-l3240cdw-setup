@@ -1,6 +1,6 @@
-# Brother HL-L3240CDW — Instalador automático (Windows)
+# Brother HL-L3240CDW — Instalador automático (Windows e macOS)
 
-Instala a impressora laser colorida **Brother HL-L3240CDW** no Windows com um único comando, usando o driver oficial da Brother (`broch20a.inf`, x64) incluído neste repositório.
+Instala a impressora laser colorida **Brother HL-L3240CDW** com um único comando. No Windows usa o driver oficial da Brother (`broch20a.inf`, x64) incluído neste repositório; no macOS usa AirPrint/IPP (sem driver — nativo do sistema).
 
 ## Instalação
 
@@ -49,6 +49,16 @@ npx github:drpauloguimaraesjr/-brother-hl-l3240cdw-setup --diagnostico
 ```
 
 Se encontrar uma Brother na rede, o relatório já indica o comando `--ip=...` pronto para usar. Também dá para testar um IP específico: `--diagnostico --ip=192.168.1.50`.
+
+## macOS
+
+O mesmo comando funciona no Mac — a HL-L3240CDW suporta **AirPrint**, então não precisa de driver: o instalador localiza a impressora na rede (Bonjour) e registra a fila no CUPS com `lpadmin` (pede a senha do Mac).
+
+```bash
+npx github:drpauloguimaraesjr/-brother-hl-l3240cdw-setup
+```
+
+As mesmas opções valem: `--ip=<IP>`, `--uninstall` e `--diagnostico`. Requisito: [Node.js](https://nodejs.org) (`brew install node` se usar Homebrew) e a impressora conectada ao Wi-Fi. Se ela estiver por USB no Mac, nem precisa do instalador: *Ajustes do Sistema → Impressoras e Scanners → Adicionar* — o macOS a reconhece sozinho.
 
 ## Impressora para toda a rede (recomendado)
 

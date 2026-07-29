@@ -2,3 +2,6 @@
 # O catalogo de assinatura (BROCH20A.CAT) valida o hash de cada arquivo;
 # qualquer conversao CRLF/LF corrompe a assinatura e o pnputil rejeita.
 driver/** -text
+
+# Scripts shell precisam de LF (CRLF quebra o bash no macOS/Linux)
+*.sh text eol=lf

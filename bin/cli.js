@@ -28,8 +28,15 @@ O diagnóstico não precisa de administrador.
 `);
 }
 
+if (os.platform() === 'darwin') {
+  // macOS: a impressora suporta AirPrint — o script shell resolve tudo via CUPS
+  const sh = path.join(__dirname, '..', 'scripts', 'install-mac.sh');
+  const r = spawnSync('bash', [sh, ...process.argv.slice(2)], { stdio: 'inherit' });
+  process.exit(r.status === null ? 1 : r.status);
+}
+
 if (os.platform() !== 'win32') {
-  console.error('Este instalador funciona apenas no Windows.');
+  console.error('Este instalador funciona apenas no Windows e no macOS.');
   process.exit(1);
 }
 
