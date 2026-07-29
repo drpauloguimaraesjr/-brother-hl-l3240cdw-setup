@@ -47,9 +47,14 @@ try {
 
     Write-Host '== 1/3 Instalando o driver no repositorio do Windows (pnputil) =='
     pnputil /add-driver "$InfPath" /install
-    if ($LASTEXITCODE -ne 0) {
+    # Codigos de sucesso do pnputil: 0, 259 (nada mais a fazer, dispositivo ja
+    # atualizado) e 3010 (sucesso, requer reinicializacao)
+    if ($LASTEXITCODE -notin @(0, 259, 3010)) {
         Write-Host "ERRO: pnputil retornou codigo $LASTEXITCODE" -ForegroundColor Red
         Done $LASTEXITCODE
+    }
+    if ($LASTEXITCODE -eq 3010) {
+        Write-Host 'Aviso: o Windows pediu reinicializacao para concluir o driver.' -ForegroundColor Yellow
     }
 
     Write-Host '== 2/3 Registrando o driver de impressao =='
