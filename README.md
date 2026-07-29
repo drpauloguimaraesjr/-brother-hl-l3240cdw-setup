@@ -52,13 +52,23 @@ Se encontrar uma Brother na rede, o relatório já indica o comando `--ip=...` p
 
 ## macOS
 
-O mesmo comando funciona no Mac — a HL-L3240CDW suporta **AirPrint**, então não precisa de driver: o instalador localiza a impressora na rede (Bonjour) e registra a fila no CUPS com `lpadmin` (pede a senha do Mac).
+No Mac a HL-L3240CDW usa **AirPrint**, então não precisa de driver: o instalador localiza a impressora na rede (Bonjour) e registra a fila no CUPS com `lpadmin` (pede a senha do Mac).
+
+**Opção 1 — sem instalar nada (recomendado):** o instalador do Mac é shell script puro, então basta o `curl`, que já vem no macOS:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/drpauloguimaraesjr/-brother-hl-l3240cdw-setup/main/scripts/install-mac.sh | bash
+```
+
+Para passar opções: `... | bash -s -- --ip=192.168.1.50` (ou `--diagnostico`, `--uninstall`).
+
+**Opção 2 — via npx** (se o Mac já tiver [Node.js](https://nodejs.org)):
 
 ```bash
 npx github:drpauloguimaraesjr/-brother-hl-l3240cdw-setup
 ```
 
-As mesmas opções valem: `--ip=<IP>`, `--uninstall` e `--diagnostico`. Requisito: [Node.js](https://nodejs.org) (`brew install node` se usar Homebrew) e a impressora conectada ao Wi-Fi. Se ela estiver por USB no Mac, nem precisa do instalador: *Ajustes do Sistema → Impressoras e Scanners → Adicionar* — o macOS a reconhece sozinho.
+Requisito nas duas opções: impressora conectada ao Wi-Fi. Se ela estiver por USB no Mac, nem precisa do instalador: *Ajustes do Sistema → Impressoras e Scanners → Adicionar* — o macOS a reconhece sozinho.
 
 ## Impressora para toda a rede (recomendado)
 
