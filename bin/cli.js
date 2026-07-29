@@ -2,9 +2,9 @@
 /*
  * Instalador da Brother HL-L3240CDW para Windows.
  * Uso:
- *   npx github:<usuario>/brother-hl-l3240cdw-setup             (USB)
- *   npx github:<usuario>/brother-hl-l3240cdw-setup --ip=<IP>   (rede)
- *   npx github:<usuario>/brother-hl-l3240cdw-setup --uninstall
+ *   npx github:drpauloguimaraesjr/-brother-hl-l3240cdw-setup             (USB)
+ *   npx github:drpauloguimaraesjr/-brother-hl-l3240cdw-setup --ip=<IP>   (rede)
+ *   npx github:drpauloguimaraesjr/-brother-hl-l3240cdw-setup --uninstall
  */
 'use strict';
 

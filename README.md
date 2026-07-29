@@ -9,7 +9,7 @@ Requisitos: Windows 10/11 x64 e [Node.js](https://nodejs.org) (para o `npx`). O 
 ### Via USB (plug and play)
 
 ```bash
-npx github:SEU-USUARIO/brother-hl-l3240cdw-setup
+npx github:drpauloguimaraesjr/-brother-hl-l3240cdw-setup
 ```
 
 Conecte o cabo USB quando o instalador pedir — o Windows detecta e cria a impressora automaticamente.
@@ -19,7 +19,7 @@ Conecte o cabo USB quando o instalador pedir — o Windows detecta e cria a impr
 Descubra o IP da impressora (menu da impressora: Rede > WLAN > Endereço IP, ou imprima o relatório de configuração de rede) e rode:
 
 ```bash
-npx github:SEU-USUARIO/brother-hl-l3240cdw-setup --ip=192.168.1.50
+npx github:drpauloguimaraesjr/-brother-hl-l3240cdw-setup --ip=192.168.1.50
 ```
 
 > Dica: reserve o IP da impressora no roteador (DHCP reservation) para ele não mudar.
@@ -27,7 +27,7 @@ npx github:SEU-USUARIO/brother-hl-l3240cdw-setup --ip=192.168.1.50
 ### Desinstalar
 
 ```bash
-npx github:SEU-USUARIO/brother-hl-l3240cdw-setup --uninstall
+npx github:drpauloguimaraesjr/-brother-hl-l3240cdw-setup --uninstall
 ```
 
 ## O que o instalador faz
