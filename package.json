@@ -1,0 +1,25 @@
+{
+  "name": "brother-hl-l3240cdw-setup",
+  "version": "1.0.0",
+  "description": "Instalador automático da impressora laser colorida Brother HL-L3240CDW no Windows (USB ou rede)",
+  "bin": {
+    "brother-hl-l3240cdw-setup": "bin/cli.js"
+  },
+  "files": [
+    "bin",
+    "scripts",
+    "driver"
+  ],
+  "os": [
+    "win32"
+  ],
+  "keywords": [
+    "brother",
+    "hl-l3240cdw",
+    "printer",
+    "driver",
+    "windows"
+  ],
+  "author": "Paulo Guimarães Jr",
+  "license": "MIT"
+}
