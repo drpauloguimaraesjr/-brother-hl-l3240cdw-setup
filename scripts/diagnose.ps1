@@ -44,19 +44,34 @@ if (-not $nets) { Write-Host ' - Nenhuma rede IPv4 ativa encontrada.' }
 $candidates = @()
 foreach ($n in $nets) {
     Write-Host (" Interface: {0} | IP local: {1}/{2}" -f $n.InterfaceAlias, $n.IPAddress, $n.PrefixLength)
-    if ($n.PrefixLength -ne 24) { Write-Host '   (sub-rede diferente de /24; varredura pulada)'; continue }
-    $subnet = ($n.IPAddress -split '\.')[0..2] -join '.'
-    Write-Host "   Varrendo $subnet.0/24 na porta 9100 (impressao RAW)..."
-    $jobs = @()
-    foreach ($i in 1..254) {
-        $addr = "$subnet.$i"
-        $c = New-Object System.Net.Sockets.TcpClient
-        $jobs += [PSCustomObject]@{ Ip = $addr; Client = $c; Async = $c.BeginConnect($addr, 9100, $null, $null) }
-    }
-    Start-Sleep -Seconds 3
-    foreach ($j in $jobs) {
-        if ($j.Async.IsCompleted -and $j.Client.Connected) { $candidates += $j.Ip }
-        $j.Client.Close()
+    if ($n.PrefixLength -lt 22) { Write-Host '   (sub-rede maior que /22; varredura pulada)'; continue }
+
+    # Calcula o intervalo de IPs da sub-rede (/22 a /24 = ate 1022 hosts)
+    $bytes = ([System.Net.IPAddress]::Parse($n.IPAddress)).GetAddressBytes()
+    [Array]::Reverse($bytes)
+    $ipInt = [int64][BitConverter]::ToUInt32($bytes, 0)
+    $hostBits = 32 - $n.PrefixLength
+    $network = $ipInt -band (-bnot ([int64][math]::Pow(2, $hostBits) - 1))
+    $first = $network + 1
+    $last  = $network + [int64][math]::Pow(2, $hostBits) - 2
+    Write-Host ("   Varrendo {0} hosts na porta 9100 (impressao RAW)..." -f ($last - $first + 1))
+
+    # Varre em blocos de 256 conexoes simultaneas
+    for ($start = $first; $start -le $last; $start += 256) {
+        $end = [math]::Min($start + 255, $last)
+        $jobs = @()
+        for ($a = $start; $a -le $end; $a++) {
+            $b = [BitConverter]::GetBytes([uint32]$a)
+            [Array]::Reverse($b)
+            $addr = [System.Net.IPAddress]::new($b).ToString()
+            $c = New-Object System.Net.Sockets.TcpClient
+            $jobs += [PSCustomObject]@{ Ip = $addr; Client = $c; Async = $c.BeginConnect($addr, 9100, $null, $null) }
+        }
+        Start-Sleep -Seconds 3
+        foreach ($j in $jobs) {
+            if ($j.Async.IsCompleted -and $j.Client.Connected) { $candidates += $j.Ip }
+            $j.Client.Close()
+        }
     }
 }
 

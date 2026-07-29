@@ -72,23 +72,39 @@ try {
         }
         Write-Host "Impressora '$PrinterName' configurada no IP $Ip." -ForegroundColor Green
     } else {
-        $found = Get-Printer -Name "*HL-L3240CDW*" -ErrorAction SilentlyContinue
-        if ($found) {
-            Write-Host "Impressora ja presente: $($found.Name) (porta $($found.PortName))." -ForegroundColor Green
-        } else {
+        # Filas locais reais da HL-L3240CDW (ignora redirecionamentos de Area de Trabalho Remota)
+        function Get-LocalQueues {
+            Get-Printer -ErrorAction SilentlyContinue | Where-Object {
+                $_.Name -like '*HL-L3240CDW*' -and
+                $_.DriverName -ne 'Remote Desktop Easy Print' -and
+                $_.PortName -notlike 'TS*'
+            }
+        }
+
+        $queues = @(Get-LocalQueues)
+        if (-not $queues) {
             Write-Host 'Conecte o cabo USB da impressora agora. Aguardando o Windows detecta-la (ate 60s)...'
-            $found = $null
-            for ($i = 0; $i -lt 12 -and -not $found; $i++) {
+            for ($i = 0; $i -lt 12 -and -not $queues; $i++) {
                 Start-Sleep -Seconds 5
-                $found = Get-Printer -Name "*HL-L3240CDW*" -ErrorAction SilentlyContinue
+                $queues = @(Get-LocalQueues)
             }
-            if ($found) {
-                Write-Host "Impressora detectada e instalada: $($found.Name)." -ForegroundColor Green
-            } else {
-                Write-Host 'O driver foi instalado, mas a impressora nao foi detectada via USB.' -ForegroundColor Yellow
-                Write-Host 'Conecte o cabo USB e o Windows a instalara automaticamente,'
-                Write-Host 'ou rode novamente com --ip=<IP> para instalar via rede.'
+        }
+
+        if ($queues) {
+            foreach ($q in $queues) {
+                if ($q.DriverName -ne $DriverName) {
+                    # O Windows costuma criar a fila com o driver generico (Microsoft IPP Class
+                    # Driver); troca para o driver oficial da Brother
+                    Set-Printer -Name $q.Name -DriverName $DriverName
+                    Write-Host "Fila '$($q.Name)' (porta $($q.PortName)): driver trocado de '$($q.DriverName)' para o oficial da Brother." -ForegroundColor Green
+                } else {
+                    Write-Host "Fila '$($q.Name)' (porta $($q.PortName)) ja usa o driver oficial da Brother." -ForegroundColor Green
+                }
             }
+        } else {
+            Write-Host 'O driver foi instalado, mas a impressora nao foi detectada via USB.' -ForegroundColor Yellow
+            Write-Host 'Conecte o cabo USB e o Windows a instalara automaticamente,'
+            Write-Host 'ou rode novamente com --ip=<IP> para instalar via rede.'
         }
     }
 
