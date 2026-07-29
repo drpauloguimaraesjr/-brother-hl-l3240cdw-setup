@@ -6,6 +6,16 @@ Instala a impressora laser colorida **Brother HL-L3240CDW** no Windows com um ú
 
 Requisitos: Windows 10/11 x64 e [Node.js](https://nodejs.org) (para o `npx`). O instalador pedirá permissão de administrador (UAC).
 
+### Não tem Node.js? Instale primeiro
+
+O Windows 10/11 já traz o `winget`. Em um PowerShell ou Prompt de Comando, rode:
+
+```bash
+winget install -e --id OpenJS.NodeJS.LTS --accept-source-agreements --accept-package-agreements
+```
+
+Depois **feche e abra o terminal novamente** (para o `npx` entrar no PATH) e siga para o comando de instalação abaixo.
+
 ### Via USB (plug and play)
 
 ```bash
