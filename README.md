@@ -40,6 +40,16 @@ npx github:drpauloguimaraesjr/-brother-hl-l3240cdw-setup --ip=192.168.1.50
 npx github:drpauloguimaraesjr/-brother-hl-l3240cdw-setup --uninstall
 ```
 
+### Diagnóstico (não instala nada)
+
+Gera um relatório do computador: impressoras e drivers Brother presentes, detecção USB e varredura da rede local procurando a impressora (porta 9100). Não precisa de administrador.
+
+```bash
+npx github:drpauloguimaraesjr/-brother-hl-l3240cdw-setup --diagnostico
+```
+
+Se encontrar uma Brother na rede, o relatório já indica o comando `--ip=...` pronto para usar. Também dá para testar um IP específico: `--diagnostico --ip=192.168.1.50`.
+
 ## O que o instalador faz
 
 1. `pnputil /add-driver driver\broch20a.inf /install` — registra o driver oficial no repositório de drivers do Windows;

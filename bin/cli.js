@@ -17,12 +17,14 @@ function help() {
 Instalador da impressora Brother HL-L3240CDW (Windows)
 
 Uso:
-  brother-hl-l3240cdw-setup              Instala via USB (plug and play)
-  brother-hl-l3240cdw-setup --ip=<IP>    Instala via rede (Wi-Fi/cabo), ex.: --ip=192.168.1.50
-  brother-hl-l3240cdw-setup --uninstall  Remove a impressora e o driver
-  brother-hl-l3240cdw-setup --help       Mostra esta ajuda
+  brother-hl-l3240cdw-setup               Instala via USB (plug and play)
+  brother-hl-l3240cdw-setup --ip=<IP>     Instala via rede (Wi-Fi/cabo), ex.: --ip=192.168.1.50
+  brother-hl-l3240cdw-setup --uninstall   Remove a impressora e o driver
+  brother-hl-l3240cdw-setup --diagnostico Gera relatorio (USB, rede, drivers) sem instalar nada
+  brother-hl-l3240cdw-setup --help        Mostra esta ajuda
 
-Será solicitada elevação de administrador (UAC) para instalar o driver.
+Para instalar/remover será solicitada elevação de administrador (UAC).
+O diagnóstico não precisa de administrador.
 `);
 }
 
@@ -33,11 +35,14 @@ if (os.platform() !== 'win32') {
 
 const args = process.argv.slice(2);
 const psArgs = [];
+let diagnose = false;
 
 for (const a of args) {
   if (a === '--help' || a === '-h') {
     help();
     process.exit(0);
+  } else if (a === '--diagnostico' || a === '--diagnose') {
+    diagnose = true;
   } else if (a.startsWith('--ip=')) {
     const ip = a.slice(5).trim();
     if (!/^[0-9]{1,3}(\.[0-9]{1,3}){3}$/.test(ip)) {
@@ -54,7 +59,15 @@ for (const a of args) {
   }
 }
 
-const ps1 = path.join(__dirname, '..', 'scripts', 'install.ps1');
+const ps1 = path.join(__dirname, '..', 'scripts', diagnose ? 'diagnose.ps1' : 'install.ps1');
+
+if (diagnose) {
+  // Diagnóstico não precisa de administrador — roda direto no console atual
+  const r = spawnSync('powershell.exe', [
+    '-NoProfile', '-ExecutionPolicy', 'Bypass', '-File', ps1, ...psArgs
+  ], { stdio: 'inherit' });
+  process.exit(r.status === null ? 1 : r.status);
+}
 
 // Verifica se já estamos com privilégios de administrador
 const adminCheck = spawnSync('powershell.exe', [
